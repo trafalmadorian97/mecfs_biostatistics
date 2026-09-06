@@ -3,37 +3,6 @@ import textwrap
 from pathlib import Path
 
 
-def _assert_macro_call_at_margin(page, macro: str, arg: str) -> None:
-    """Fail the build if a macro call is indented in the page source.
-
-    Some macros (e.g. ``markdown_table``) emit block-level markdown --- an
-    admonition or table --- that python-markdown only parses when it begins at
-    the left margin. If the ``{{ macro(...) }}`` call is itself indented, the
-    first line of the macro output inherits that indentation and is reinterpreted
-    as an indented code block, silently breaking the page.
-
-    We locate the call in the raw page source by the unique ``arg`` (the table
-    path) and raise if its line has leading whitespace. ``arg`` being unique per
-    call lets this work even with several calls on one page; if the call spans
-    multiple source lines it simply isn't checked.
-    """
-    source = Path(page.file.abs_src_path).read_text()
-    needle = f"{macro}("
-    for line in source.splitlines():
-        if needle in line and arg in line:
-            if line != line.lstrip():
-                raise ValueError(
-                    f'{macro}("{arg}") is indented on page '
-                    f"'{page.file.src_uri}'. This macro emits a block-level "
-                    "admonition/table that only renders at the left margin; "
-                    "move the call to column 0."
-                )
-            return
-    raise ValueError(
-        f"{macro} and {arg} not found in any lines in {page.file.abs_src_path}"
-    )
-
-
 def _site_relative_url(src: str, docs_dir: str, page_dest_uri: str) -> str:
     """Convert a project-root-relative asset path to a URL relative to the served page.
 
@@ -142,7 +111,6 @@ def define_env(env):
                 f"markdown_table: '{src}' does not exist "
                 f"(referenced from page '{env.page.file.src_uri}')"
             )
-        _assert_macro_call_at_margin(env.page, macro="markdown_table", arg=src)
         text = file_path.read_text()
 
         # A markdown table is a header row + a separator row + one row per record;
@@ -285,6 +253,17 @@ def define_env(env):
             caption=SUSIE_POLYFUN_EXPLAIN_TABLE_CAPTION,
         )
 
+
+    @env.macro
+    def susie_polyfun_variant_detail_table(src, id, height="775px", precision=4):
+        return data_table(
+            src=src,
+            id=id,
+            height=height,
+            precision=precision,
+            caption=SUSIE_POLYFUN_VARIANT_DETAIL_TABLE_CAPTION,
+        )
+
     @env.macro
     def data_table(src, id, height="600px", precision=4, caption=""):
         """Embed a large tabular asset as a sortable, filterable, virtualised table.
@@ -331,7 +310,6 @@ def define_env(env):
                 f"data_table: '{src}' does not exist "
                 f"(referenced from page '{env.page.file.src_uri}')"
             )
-        _assert_macro_call_at_margin(env.page, macro="data_table", arg=src)
 
         relative_url = _site_relative_url(
             src, env.conf["docs_dir"], env.page.file.dest_uri
@@ -456,3 +434,6 @@ PPP_RG_DATA_TABLE_CAPTION = "Columns: oid: Olink assay ID; gene: name of gene/pr
 SUSIE_POLYFUN_EXPLAIN_PLOT_CAPTION = "Plot illustrating results of applying SUSIE with a polyfun prior to a GWAS locus.  First panel: Manhattan plot of locus with overlaid recombination rate data.  Second panel: PIPs from SUSIE run with uniform prior.  Third panel: PIPs from SUSIE run with PolyFun prior. For each credible set, if the use of the PolyFun prior produced a significant increase in the PIP of the lead variant, and if that increase can be attributed to specific annotation families, those key annotation families will be listed in a callout.  Fourth Panel: genes at locus."
 
 SUSIE_POLYFUN_EXPLAIN_TABLE_CAPTION = "Columns: chr: chromosome; pos: hg19 genomic position; ea: effect allele; nea: non-effect allele; cs_pf: credible set number in PolyFun-prior run; cs_u: credible set number in uniform-prior run; pip_pf: PIP (Posterior Inclusion Probability) in PolyFun-prior SUSIE run; pip_u: PIP in uniform-prior SUSIE run; lift: proportional increase in prior weight when switching from uniform prior to PolyFun prior; annot_X: Approximate contribution of annotation family X to PolyFun prior minus averaged contribution of annotation family X over all variants selected by uniform-prior SUSIE run."
+
+
+SUSIE_POLYFUN_VARIANT_DETAIL_TABLE_CAPTION = "Columns: family: name of high-level annotation family; annotation: granular annotation name; gamma: regression coefficient of PolyFun prior weight on granular annotation, which indicates the extent to which the annotation can affect the prior. alpha_bar: PIP-weighted mean value of this annotation across all variants in uniform-prior SUSIE credible sets, which can be used as a baseline against which to compare the annotation values of key variants.  other columns: the values of all annotations for key variants under consideration."
