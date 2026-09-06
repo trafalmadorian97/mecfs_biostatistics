@@ -58,20 +58,32 @@ These results show that at the chromosome 1 locus, SUSIE is insensitive to confi
 ### Detailed Fine mapping results
 
 
-The plot below illustrates the results of SUSIE fine mapping with and without the PolyFun  prior
+The plot below illustrates the results of $L=10$ SUSIE fine mapping with and without the PolyFun  prior
 
 
 {{
 susie_polyfun_explain_plot("docs/_figs/decode_me_polyfun_explainchr1_173500000_174500000_palindromes_keep_l10_explain_plot_svg.svg")
 }}
 
-The table below provides detailed information on SUSIE credible-set variants with and without the polyfun prior.
+The table below provides detailed information on $L=10$ SUSIE credible-set variants with and without the polyfun prior.
 
 {{
 susie_polyfun_data_table(src="docs/_figs/decode_me_polyfun_explainchr1_173500000_174500000_palindromes_keep_l10_explain_detailed_table.parquet",
 id="chr1_polyfun_susie_table")
 }}
 
+
+These results show that while with a uniform prior SUSIE produces a rather diffuse credible set, with the PolyFun prior, the credible set is significantly more concentrated on a small number of variants.  The top PolyFun SUSIE variant is the SNP **chr1:173855298:A:T**.  PolyFun appears to have assigned a high prior weight to this variant due to annotation in the **coding**  and **conserved** families.  The second PolyFun SUSIE variant is the insertion **chr1:173838788:T:TG**.  PolyFun appears to have assigned high prior weight to this variant due to annotations in the **coding** and **promoter_or_enhancer** families.
+
+
+To investigate further, we can look in detail at the full set of annotations for the top variants.
+
+{{susie_polyfun_variant_detail_table(src="docs/_figs/decode_me_polyfun_explainchr1_173500000_174500000_palindromes_keep_l10_explain_per_variant_annotation_table.parquet" ,id="chr1_polyfun_susie_characterization")}}
+
+The above table reveals that:
+
+-  **chr1:173855298:A:T** is variant in the 3' untranslated region (_UTR_3_UCSC_common_) of the gene [ZBTB37](https://www.genecards.org/card/ZBTB37) that is strongly evolutionarily conserved in primates and mammals (_Conserved_Primate_phastCons46way_common, Conserved_Mammal_phastCons46way_common)_.
+- **chr1:173838788:T:TG** is a variant in an evolutionarily ancient promoter (_Ancient_Sequence_Age_Human_Promoter_common_) for the ZBTB37 gene.
 
 
 
