@@ -73,7 +73,7 @@ id="chr1_polyfun_susie_table")
 }}
 
 
-These results show that while with a uniform prior SUSIE produces a rather diffuse credible set, with the PolyFun prior, the credible set is significantly more concentrated on a small number of variants.  The top PolyFun SUSIE variant is the SNP **chr1:173855298:A:T**.  PolyFun appears to have assigned a high prior weight to this variant due to annotation in the **coding**  and **conserved** families.  The second PolyFun SUSIE variant is the insertion **chr1:173838788:T:TG**.  PolyFun appears to have assigned high prior weight to this variant due to annotations in the **coding** and **promoter_or_enhancer** families.
+These results show that while with a uniform prior SUSIE produces a rather diffuse credible set, with the PolyFun prior, the credible set is significantly more concentrated on a small number of variants.  The top PolyFun SUSIE variant is the SNP **chr1:173855298:A:T**.  PolyFun appears to have assigned a high prior weight to this variant due to annotation in the _coding_  and _conserved_ families.  The second PolyFun SUSIE variant is the insertion **chr1:173838788:T:TG**.  PolyFun appears to have assigned high prior weight to this variant due to annotations in the **coding** and **promoter_or_enhancer** families.
 
 
 To investigate further, we can look in detail at the full set of annotations for the top variants.
