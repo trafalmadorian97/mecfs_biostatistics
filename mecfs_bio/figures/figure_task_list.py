@@ -251,6 +251,7 @@ ALL_FIGURE_TASKS: list[Task] = [
     POLYFUN_EXPLAIN_CHR1_174.upset_cs50_polyfun,
     POLYFUN_EXPLAIN_CHR1_174.groups_by_label["l10"].plot_svg,
     POLYFUN_EXPLAIN_CHR1_174.groups_by_label["l10"].detailed_table,
+    POLYFUN_EXPLAIN_CHR1_174.groups_by_label["l10"].per_variant_annotation_table,
     # H-magma
     DECODE_ME_H_MAGMA_ASSET_GENERATOR.labeled_by_annotation()[
         "adult_brain"

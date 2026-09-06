@@ -10,8 +10,8 @@ def go():
             # POLYFUN_EXPLAIN_CHR1_174.upset_all_polyfun,
             # POLYFUN_EXPLAIN_CHR1_174.upset_cs50_polyfun,
             # POLYFUN_EXPLAIN_CHR1_174.groups_by_label["l10"].plot_svg,
-            POLYFUN_EXPLAIN_CHR1_174.groups_by_label["l10"].detailed_table
-
+            POLYFUN_EXPLAIN_CHR1_174.groups_by_label["l10"].detailed_table,
+            POLYFUN_EXPLAIN_CHR1_174.groups_by_label["l10"].per_variant_annotation_table
         ]
     )
 

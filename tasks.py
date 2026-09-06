@@ -456,6 +456,7 @@ def serve_docs(
     strict: bool = True,
     include_authors: bool = False,
     enable_api_autonav: bool = False,
+    live_reload: bool = False,
 ):
     """
     Use mkdocs to serve documentation
@@ -465,9 +466,11 @@ def serve_docs(
         _set_use_gh_token()
     if enable_api_autonav:
         _set_enable_api_autonav()
-    cmd = " mkdocs serve"
+    cmd = " mkdocs serve "
     if strict:
         cmd += " --strict"
+    if not live_reload:
+        cmd += " --no-livereload"
     print("Serving documentation...")
     print(f"running {cmd}")
     c.run(cmd, pty=True)
