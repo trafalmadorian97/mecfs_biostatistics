@@ -456,7 +456,7 @@ def serve_docs(
     strict: bool = True,
     include_authors: bool = False,
     enable_api_autonav: bool = False,
-    live_reload:bool=False
+    live_reload: bool = False,
 ):
     """
     Use mkdocs to serve documentation

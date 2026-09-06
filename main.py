@@ -253,7 +253,6 @@ def define_env(env):
             caption=SUSIE_POLYFUN_EXPLAIN_TABLE_CAPTION,
         )
 
-
     @env.macro
     def susie_polyfun_variant_detail_table(src, id, height="775px", precision=4):
         return data_table(
