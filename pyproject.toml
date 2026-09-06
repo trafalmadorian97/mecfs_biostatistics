@@ -2,7 +2,7 @@
 name = "biostatistics"
 version = "0.1.0"
 readme = "README.md"
-requires-python = "~=3.13"
+requires-python = "~=3.13.0"
 
 # gwaslab 4.2.2 caps numpy<2, matplotlib<3.9, and pins pysam==0.22.1.  Those exact
 # versions have no cp313 wheels on PyPI, so on Python 3.13 they would each build from
