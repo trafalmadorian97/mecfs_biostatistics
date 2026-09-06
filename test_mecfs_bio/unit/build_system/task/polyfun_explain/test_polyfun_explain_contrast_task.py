@@ -20,6 +20,8 @@ from mecfs_bio.build_system.meta.reference_meta.reference_file_meta import (
 from mecfs_bio.build_system.meta.result_directory_meta import ResultDirectoryMeta
 from mecfs_bio.build_system.meta.simple_file_meta import SimpleFileMeta
 from mecfs_bio.build_system.task.annotation_weights.ridge_annotation_weights_task import (
+    ANNOTATION_COL,
+    FAMILY_COL,
     WEIGHTS_PARQUET_FILENAME,
 )
 from mecfs_bio.build_system.task.base_task import Task
@@ -32,6 +34,7 @@ from mecfs_bio.build_system.task.polyfun_explain.polyfun_explain_contrast_task i
     DISP_LIFT,
     DISP_PIP_PF,
     PER_FAMILY_CONTRAST_FILENAME,
+    PER_VARIANT_ANNOTATION_TABLE_FILENAME,
     SELECTION_JSON_FILENAME,
     TOP_LINE_DISPLAY_TABLE_FILENAME,
     PolyfunExplainContrastTask,
@@ -477,6 +480,94 @@ def test_secondary_position_from_snpid_adds_pos_column(tmp_path: Path):
         assert table.columns.index("pos_hg38") == table.columns.index("pos") + 1
         for row in table.iter_rows(named=True):
             assert row["pos_hg38"] == row["pos"] + _SECONDARY_POS_OFFSET
+
+
+def test_per_variant_annotation_table(tmp_path: Path):
+    # The per-variant annotation table characterizes the top variants of each
+    # polyfun credible set: rows are the detailed annotations, columns are the
+    # selected variants (chr:pos:nea:ea, hg19), cells the raw annotation values.
+    variants = pl.DataFrame(
+        {
+            "CHR": [1] * _N_VARIANTS,
+            "POS": [10, 20, 30, 40, 50, 60],
+            "EA": ["A"] * _N_VARIANTS,
+            "NEA": ["C"] * _N_VARIANTS,
+        }
+    )
+    a = np.array([1.0, 0.0, 0.0, 0.0, 0.0, 0.0])  # coding: variant 0 only
+    b = np.array([2.0, 1.0, 1.0, 1.0, 1.0, 1.0])  # conserved
+    annot = pl.DataFrame(
+        {
+            "CHR": [1] * _N_VARIANTS,
+            "BP": [10, 20, 30, 40, 50, 60],
+            "SNP": [f"rs{i}" for i in range(_N_VARIANTS)],
+            "A1": ["A"] * _N_VARIANTS,
+            "A2": ["C"] * _N_VARIANTS,
+            _ANNOT_A: a,
+            _ANNOT_B: b,
+        }
+    )
+    annot_path = tmp_path / "annot.parquet"
+    annot.write_parquet(annot_path)
+
+    weights = pl.DataFrame(
+        {
+            "annotation": [_ANNOT_A, _ANNOT_B],
+            "gamma_raw": [3.0, 0.5],
+            "gamma_standardized": [0.0, 0.0],
+            "family": ["coding", "conserved"],
+        }
+    )
+    weights_dir = tmp_path / "weights"
+    weights_dir.mkdir()
+    weights.write_parquet(weights_dir / WEIGHTS_PARQUET_FILENAME)
+
+    # Polyfun PIP + two credible sets chosen to exercise every selection branch:
+    #   L1 top=var0 (0.5): var1 (0.4) within the 0.2 gap and above the 0.1 floor
+    #   -> kept; var2 (0.2) outside the gap -> dropped; var3 (0.05) below the floor
+    #   -> dropped. L2 top=var4 (0.05) kept despite being below the floor (it is the
+    #   set's max); var5 (0.03) dropped. Selected: var0, var1, var4.
+    pip_pf = np.array([0.5, 0.4, 0.2, 0.05, 0.05, 0.03])
+    pf_dir = tmp_path / "polyfun"
+    _write_run_dir(
+        pf_dir,
+        variants,
+        pip_pf,
+        {"L1": [0, 1, 2, 3], "L2": [4, 5]},
+        prior_weights=np.ones(_N_VARIANTS),
+    )
+    uni_dir = tmp_path / "uniform"
+    _write_run_dir(
+        uni_dir, variants, np.array(_DEFAULT_UNIFORM_PIP), {"L1": [0, 1]}, None
+    )
+
+    result = _run_contrast_task(tmp_path, uni_dir, pf_dir, weights_dir, annot_path)
+    table = pl.read_parquet(result.path / PER_VARIANT_ANNOTATION_TABLE_FILENAME)
+
+    # Leading columns are the family/annotation labels plus the per-annotation
+    # gamma and alpha_bar context; the variant columns follow in (credible set,
+    # descending PIP) order. Gap-/floor-excluded variants (POS 30, 40, 60) absent.
+    assert table.columns[:4] == [FAMILY_COL, ANNOTATION_COL, "gamma", "alpha_bar"]
+    assert table.columns[4:] == ["1:10:C:A", "1:20:C:A", "1:50:C:A"]
+    # One row per detailed annotation.
+    assert table.height == len(weights)
+    # Raw annotation values (no gamma) per selected variant, plus gamma (the ridge
+    # coefficient) and alpha_bar (uniform PIP-weighted mean over the locus). With
+    # uniform PIP summing to 1: alpha_bar_A = 0.2*1 = 0.2; alpha_bar_B = 0.2*2 +
+    # (0.2+0.2+0.2+0.1+0.1)*1 = 1.2.
+    coding = table.filter(pl.col(ANNOTATION_COL) == _ANNOT_A)
+    assert coding[FAMILY_COL][0] == "coding"
+    assert coding["gamma"][0] == 3.0
+    assert abs(coding["alpha_bar"][0] - 0.2) < 1e-9
+    assert coding.select("1:10:C:A", "1:20:C:A", "1:50:C:A").row(0) == (1.0, 0.0, 0.0)
+    conserved = table.filter(pl.col(ANNOTATION_COL) == _ANNOT_B)
+    assert conserved["gamma"][0] == 0.5
+    assert abs(conserved["alpha_bar"][0] - 1.2) < 1e-9
+    assert conserved.select("1:10:C:A", "1:20:C:A", "1:50:C:A").row(0) == (
+        2.0,
+        1.0,
+        1.0,
+    )
 
 
 def test_secondary_position_malformed_snpid_raises(tmp_path: Path):

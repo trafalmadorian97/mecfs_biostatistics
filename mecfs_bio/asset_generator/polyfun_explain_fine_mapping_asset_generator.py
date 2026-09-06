@@ -73,6 +73,7 @@ from mecfs_bio.build_system.task.pipes.rename_col_pipe import RenameColPipe
 from mecfs_bio.build_system.task.pipes.uniquepipe import UniquePipe
 from mecfs_bio.build_system.task.polyfun_explain.polyfun_explain_contrast_task import (
     DETAILED_DISPLAY_TABLE_FILENAME,
+    PER_VARIANT_ANNOTATION_TABLE_FILENAME,
     TOP_LINE_DISPLAY_TABLE_FILENAME,
     PolyfunExplainContrastTask,
     SecondaryPositionFromSnpid,
@@ -161,6 +162,9 @@ class PolyfunExplainGroup:
     # contrast task's other (detail) outputs.
     top_line_table: Task
     detailed_table: Task
+    # The granular per-variant annotation characterization table, copied out of the
+    # contrast directory as a standalone FileAsset.
+    per_variant_annotation_table: Task
     label: str
 
 
@@ -185,6 +189,7 @@ class PolyfunExplainOuterGroup:
                 g.plot_svg,
                 g.top_line_table,
                 g.detailed_table,
+                g.per_variant_annotation_table,
             ]
         out += [self.upset_all_polyfun, self.upset_cs50_polyfun]
         return out
@@ -271,6 +276,13 @@ def generate_polyfun_explain_group(
         extension=".parquet",
         read_spec=DataFrameReadSpec(DataFrameParquetFormat()),
     )
+    per_variant_annotation_table = CopyFileFromDirectoryTask.create_result_table(
+        asset_id=f"{stem}_explain_per_variant_annotation_table",
+        source_directory_task=contrast,
+        path_inside_directory=PurePath(PER_VARIANT_ANNOTATION_TABLE_FILENAME),
+        extension=".parquet",
+        read_spec=DataFrameReadSpec(DataFrameParquetFormat()),
+    )
     return PolyfunExplainGroup(
         susie_uniform=susie_uniform,
         susie_polyfun=susie_polyfun,
@@ -280,6 +292,7 @@ def generate_polyfun_explain_group(
         plot_svg=plot_svg,
         top_line_table=top_line_table,
         detailed_table=detailed_table,
+        per_variant_annotation_table=per_variant_annotation_table,
         label=config.label,
     )
 

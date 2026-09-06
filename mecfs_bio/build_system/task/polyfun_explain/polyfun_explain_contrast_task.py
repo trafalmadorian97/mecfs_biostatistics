@@ -63,6 +63,11 @@ from mecfs_bio.constants.polyfun_annotation_families import (
 # each PIP change. The detailed table is wide and is meant to be scrolled.
 TOP_LINE_DISPLAY_TABLE_FILENAME = "top_line_display_table.parquet"
 DETAILED_DISPLAY_TABLE_FILENAME = "detailed_display_table.parquet"
+# A tall, narrow characterization table (NOT explainability): one row per detailed
+# annotation, one column per selected top variant, cells holding the raw
+# annotation value a_ic (no gamma factor). Lets a reader read off the full ~180
+# annotation profile of the variants the polyfun run most strongly selects.
+PER_VARIANT_ANNOTATION_TABLE_FILENAME = "per_variant_annotation_table.parquet"
 PER_ANNOTATION_CONTRAST_FILENAME = "per_annotation_contrast.parquet"
 PER_FAMILY_CONTRAST_FILENAME = "per_family_contrast.parquet"
 PRIOR_LIFT_FILENAME = "prior_lift.parquet"
@@ -93,6 +98,19 @@ _CALLOUT_SCHEMA: dict[str, pl.DataType] = {
 _DOMINANCE_MARGIN = 0.05
 _PRIOR_EFFECT_MARGIN = 0.10
 _MAX_CALLOUT_FAMILIES = 3
+# Top-variant selection for the per-variant annotation table. Within each polyfun
+# credible set, the max-PIP variant is always kept; any other variant is kept only
+# if its polyfun PIP clears the floor AND sits within the gap of the set's top PIP.
+_TOP_VARIANT_PIP_FLOOR = 0.10
+_TOP_VARIANT_PIP_GAP = 0.20
+# Internal columns used while building the per-variant annotation table.
+_VARIANT_LABEL_COL = "variant"
+_ANNOT_VALUE_COL = "value"
+# Per-annotation context columns on the per-variant table: the ridge regression
+# coefficient gamma_raw_c, and abar_c (the uniform-run PIP-weighted mean of the
+# annotation over the locus variants).
+DISP_GAMMA = "gamma"
+DISP_ALPHA_BAR = "alpha_bar"
 
 DISP_CHR = "chr"
 DISP_POS = "pos"
@@ -246,6 +264,11 @@ class PolyfunExplainContrastTask(Task):
             pf_annot, union_keys, annot_cols, gamma, family, abar
         )
 
+        top_variants = _select_top_variants(cs_pf, pf_variants)
+        per_variant_annot = _per_variant_annotation_table(
+            pf_annot, top_variants, annot_cols, family, gamma, abar
+        )
+
         focal = pf_variants.sort(PIP_COLUMN, descending=True).head(1)
         focal_key = {k: focal[k][0] for k in _KEY}
         focal_families = _select_families(
@@ -279,6 +302,9 @@ class PolyfunExplainContrastTask(Task):
         )
         top_line.write_parquet(scratch_dir / TOP_LINE_DISPLAY_TABLE_FILENAME)
         detailed.write_parquet(scratch_dir / DETAILED_DISPLAY_TABLE_FILENAME)
+        per_variant_annot.write_parquet(
+            scratch_dir / PER_VARIANT_ANNOTATION_TABLE_FILENAME
+        )
         (scratch_dir / SELECTION_JSON_FILENAME).write_text(
             json.dumps(
                 {
@@ -656,6 +682,112 @@ def _build_callouts(
             }
         )
     return pl.DataFrame(rows, schema=_CALLOUT_SCHEMA)
+
+
+def _select_top_variants(
+    cs_pf: pl.DataFrame, pf_variants: pl.DataFrame
+) -> pl.DataFrame:
+    """The top variants of each polyfun credible set, for the per-variant
+    annotation table. Within a set the max-PIP variant is always kept; any other
+    variant is kept only if its polyfun PIP exceeds _TOP_VARIANT_PIP_FLOOR and is
+    within _TOP_VARIANT_PIP_GAP of the set's top PIP. Returns _KEY plus the
+    credible-set number and polyfun PIP, ordered by (credible set, descending PIP)
+    so the table's variant columns follow that order."""
+    cs = cs_pf.join(pf_variants.select(*_KEY, PIP_COLUMN), on=_KEY, how="inner")
+    if cs.height == 0:
+        return pl.DataFrame(
+            schema={**_KEY_SCHEMA, _CS_NUMBER_COL: pl.Int32(), PIP_COLUMN: pl.Float64()}
+        )
+    kept: list[pl.DataFrame] = []
+    for _, grp in cs.group_by(_CS_NUMBER_COL, maintain_order=True):
+        top_pip = grp[PIP_COLUMN].max()
+        kept.append(
+            grp.filter(
+                (pl.col(PIP_COLUMN) == top_pip)
+                | (
+                    (pl.col(PIP_COLUMN) > _TOP_VARIANT_PIP_FLOOR)
+                    & (top_pip - pl.col(PIP_COLUMN) <= _TOP_VARIANT_PIP_GAP)
+                )
+            )
+        )
+    return (
+        pl.concat(kept, how="vertical")
+        .select(*_KEY, _CS_NUMBER_COL, PIP_COLUMN)
+        .sort([_CS_NUMBER_COL, PIP_COLUMN], descending=[False, True])
+    )
+
+
+def _variant_label_expr() -> pl.Expr:
+    """chr:pos:nea:ea label (hg19), used as a per-variant-table column name."""
+    return (
+        pl.col(GWASLAB_CHROM_COL).cast(pl.String)
+        + ":"
+        + pl.col(GWASLAB_POS_COL).cast(pl.String)
+        + ":"
+        + pl.col(GWASLAB_NON_EFFECT_ALLELE_COL)
+        + ":"
+        + pl.col(GWASLAB_EFFECT_ALLELE_COL)
+    )
+
+
+def _per_variant_annotation_table(
+    pf_annot: pl.DataFrame,
+    top_variants: pl.DataFrame,
+    annot_cols: list[str],
+    family: dict[str, str],
+    gamma: dict[str, float],
+    abar: dict[str, float],
+) -> pl.DataFrame:
+    """Characterization table: one row per detailed annotation (a family and an
+    annotation column), then two per-annotation context columns -- the ridge
+    coefficient gamma_raw_c and abar_c (the uniform-run PIP-weighted mean of the
+    annotation) -- then one column per selected top variant (labelled
+    chr:pos:nea:ea in hg19), holding the raw annotation value a_ic (no gamma).
+    Rows are ordered by family in the canonical taxonomy order, then annotation;
+    variant columns follow top_variants' order. Fails fast if a selected top
+    variant has no annotation row, since the inner join would otherwise drop it
+    silently and understate the variant's profile."""
+    fam_order = {fam: i for i, fam in enumerate(_families_in_canonical_order())}
+    skeleton = pl.DataFrame({ANNOTATION_COL: annot_cols}).with_columns(
+        pl.col(ANNOTATION_COL).replace_strict(family).alias(FAMILY_COL),
+        pl.col(ANNOTATION_COL).replace_strict(gamma).alias(DISP_GAMMA),
+        pl.col(ANNOTATION_COL).replace_strict(abar).alias(DISP_ALPHA_BAR),
+    )
+
+    sel = pf_annot.join(top_variants.select(*_KEY), on=_KEY, how="inner")
+    n_selected = top_variants.height
+    if sel.select(_KEY).n_unique() != n_selected:
+        missing = top_variants.join(pf_annot.select(_KEY), on=_KEY, how="anti")
+        raise ValueError(
+            f"{missing.height} selected top variant(s) have no annotation row and "
+            f"cannot be characterized: {missing.select(_KEY).rows()}"
+        )
+
+    ordered_labels: list[str] = []
+    wide = skeleton
+    if n_selected:
+        labeled = sel.with_columns(_variant_label_expr().alias(_VARIANT_LABEL_COL))
+        ordered_labels = top_variants.select(
+            _variant_label_expr().alias(_VARIANT_LABEL_COL)
+        )[_VARIANT_LABEL_COL].to_list()
+        pivoted = labeled.unpivot(
+            on=annot_cols,
+            index=_VARIANT_LABEL_COL,
+            variable_name=ANNOTATION_COL,
+            value_name=_ANNOT_VALUE_COL,
+        ).pivot(_VARIANT_LABEL_COL, index=ANNOTATION_COL, values=_ANNOT_VALUE_COL)
+        wide = skeleton.join(pivoted, on=ANNOTATION_COL, how="left")
+
+    return (
+        wide.with_columns(
+            pl.col(FAMILY_COL)
+            .replace_strict(fam_order, default=len(fam_order))
+            .alias("_fam_order")
+        )
+        .sort(["_fam_order", ANNOTATION_COL])
+        .drop("_fam_order")
+        .select(FAMILY_COL, ANNOTATION_COL, DISP_GAMMA, DISP_ALPHA_BAR, *ordered_labels)
+    )
 
 
 _DISPLAY_BASE_COLS = [
