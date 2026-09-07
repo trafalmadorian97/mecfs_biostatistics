@@ -70,6 +70,7 @@ from mecfs_bio.build_system.task.susie_stacked_plot_task import (
     GENE_INFO_NAME_COL,
     GENE_INFO_START_COL,
     GENE_INFO_STRAND_COL,
+    GWAS_SIGNIFICANCE_MLOG10P,
     plot_gene_tracks,
     plot_susie_track,
 )
@@ -90,6 +91,14 @@ PLOT_PNG_FILENAME = "explain_plot.png"
 PLOT_SVG_FILENAME = "explain_plot.svg"
 # PIP units of empty space kept above the tallest stem for the callout labels.
 _PIP_LABEL_HEADROOM = 0.4
+# Figure sizing. The panels stack vertically sharing the x-axis; the figure is
+# sized well beyond matplotlib's defaults so the Manhattan points, PIP stems, and
+# gene labels stay legible when the figure fills a laptop screen. Width is fixed;
+# height scales with the panel count.
+_FIGURE_WIDTH_IN = 18.0
+_PANEL_HEIGHT_IN = 2.9
+# Raster resolution for the .png (the .svg stays vector).
+_PNG_DPI = 200
 
 
 @frozen
@@ -259,7 +268,7 @@ def _render(
 ) -> None:
     # manhattan + 2 pip + genes, one panel each.
     n_panels = 1 + 2 + 1
-    fig = Figure(figsize=(12, 1.7 * n_panels))
+    fig = Figure(figsize=(_FIGURE_WIDTH_IN, _PANEL_HEIGHT_IN * n_panels))
     # Left column holds the tracks; the narrow right column is reserved for
     # legends/colorbars so nothing overlaps the data (mirrors SusieStackPlotTask).
     gs = fig.add_gridspec(
@@ -280,6 +289,14 @@ def _render(
     r2 = ld[lead, :] ** 2
     sc = ax0.scatter(x, neglogp, c=r2, cmap="viridis", vmin=0, vmax=1, s=10)
     sc.set_rasterized(True)
+    # Dashed grey reference line at the default GWAS genome-wide significance
+    # threshold (matches SusieStackPlotTask's Manhattan panel).
+    ax0.axhline(
+        y=GWAS_SIGNIFICANCE_MLOG10P,
+        color="grey",
+        linestyle="--",
+        linewidth=1.5,
+    )
     ax0.set_ylabel("-log10 p")
     # Right-column cell for panel 1: a shortened colorbar in the upper portion
     # (anchored right, clear of the recomb axis's ticks/label), and below it a
@@ -377,7 +394,7 @@ def _render(
         ax.spines["right"].set_visible(False)
     ax_gene.spines["left"].set_visible(False)
 
-    fig.savefig(scratch_dir / PLOT_PNG_FILENAME, dpi=150, bbox_inches="tight")
+    fig.savefig(scratch_dir / PLOT_PNG_FILENAME, dpi=_PNG_DPI, bbox_inches="tight")
     fig.savefig(scratch_dir / PLOT_SVG_FILENAME, bbox_inches="tight")
 
 
