@@ -95,6 +95,16 @@ _CALLOUT_SCHEMA: dict[str, pl.DataType] = {
     CALLOUT_LABEL_COL: pl.String(),
 }
 _MAX_CALLOUT_FAMILIES = 3
+# A family is only labelled when its per-family contrast gamma*(a_ic - abar_c) is
+# at least this fraction of the largest family contrast at the same variant. When
+# one family dominates a variant's PIP lift, this drops runners-up whose own
+# contribution is negligible rather than crediting them alongside the driver.
+_CALLOUT_FAMILY_RELATIVE_MIN = 0.05
+# A callout only names annotation families when the polyfun prior actually lifted
+# the variant's PIP over the uniform run by at least this much; otherwise the
+# variant is still marked, but the families it carries are not credited with the
+# (absent) PIP change so are left off the label.
+_FAMILY_LABEL_MIN_PIP_BOOST = 0.05
 # Top-variant selection, shared by the per-variant annotation table AND the plot
 # callouts, so both mark/characterize exactly the same variants. Within each
 # polyfun credible set, the max-PIP variant is always kept; any other variant is
@@ -586,17 +596,26 @@ def _callout_families(
 ) -> list[tuple[AnnotationFamily, str]]:
     """The key families for one flagged variant: those whose per-family contrast
     is positive (elevated at this variant) and exceeds one background SD, bucketed
-    1-2 SD -> '+', >2 SD -> '++'. Top max_families by z, z descending. Families
-    with a degenerate (<= 0) background SD are skipped."""
+    1-2 SD -> '+', >2 SD -> '++'. A family must also carry at least
+    _CALLOUT_FAMILY_RELATIVE_MIN of the largest family contrast at this variant, so
+    a variant whose PIP lift is driven by one family does not also credit
+    negligible runners-up. Top max_families by z, z descending. Families with a
+    degenerate (<= 0) background SD are skipped."""
     focal = per_family
     for k, v in focal_key.items():
         focal = focal.filter(pl.col(k) == v)
+    top_contrast = focal[FAMILY_CONTRAST_COL].max()
+    if top_contrast is None:
+        return []
+    max_diff = cast(float, top_contrast)
     scored: list[tuple[float, AnnotationFamily, str]] = []
     for row in focal.iter_rows(named=True):
         fam = cast(AnnotationFamily, row[FAMILY_COL])
         diff = row[FAMILY_CONTRAST_COL]
         sd = family_sd.get(fam, 0.0)
         if diff <= 0.0 or sd <= 0.0:
+            continue
+        if diff <= _CALLOUT_FAMILY_RELATIVE_MIN * max_diff:
             continue
         z = diff / sd
         if z <= 1.0:
@@ -648,9 +667,12 @@ def _build_callouts(
     """One callout row per selected top variant (see _select_top_variants: each
     polyfun credible set's max-PIP variant plus any near-tie above the floor), so
     the plot marks exactly the variants the per-variant annotation table
-    characterizes. Each callout names the variant's key annotation families (from
-    _callout_families); a variant with no qualifying family still gets a callout
-    carrying just its identifier."""
+    characterizes. A callout names the variant's key annotation families (from
+    _callout_families) only when the polyfun run lifted its PIP over the uniform
+    run by at least _FAMILY_LABEL_MIN_PIP_BOOST -- crediting families with a PIP
+    change that did not happen would mislead. A variant that fails that gate (or
+    whose families do not qualify) still gets a callout carrying just its
+    identifier."""
     uni_pip = {
         tuple(row[k] for k in _KEY): row[PIP_COLUMN]
         for row in uni_variants.select(*_KEY, PIP_COLUMN).iter_rows(named=True)
@@ -659,14 +681,17 @@ def _build_callouts(
     for row in top_variants.iter_rows(named=True):
         focal_key = {k: row[k] for k in _KEY}
         u = uni_pip.get(tuple(row[k] for k in _KEY), 0.0)
-        families = _callout_families(
-            per_family, focal_key, family_sd, _MAX_CALLOUT_FAMILIES
+        pip_pf = float(row[PIP_COLUMN])
+        families = (
+            _callout_families(per_family, focal_key, family_sd, _MAX_CALLOUT_FAMILIES)
+            if pip_pf - u >= _FAMILY_LABEL_MIN_PIP_BOOST
+            else []
         )
         rows.append(
             {
                 **{k: focal_key[k] for k in _KEY},
                 CALLOUT_CS_COL: int(row[_CS_NUMBER_COL]),
-                CALLOUT_PIP_PF_COL: float(row[PIP_COLUMN]),
+                CALLOUT_PIP_PF_COL: pip_pf,
                 CALLOUT_PIP_U_COL: float(u),
                 CALLOUT_LABEL_COL: _format_callout_label(focal_key, families),
             }
