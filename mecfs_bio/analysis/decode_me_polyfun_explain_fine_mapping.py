@@ -8,13 +8,9 @@ covers all of them.
 """
 
 from mecfs_bio.analysis.runner.default_runner import DEFAULT_RUNNER
-from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.fine_mapping.polyfun_explainability.susie_explain_decode_me_37_chr1_174_128_548 import (
-    POLYFUN_EXPLAIN_CHR1_174,
+from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.fine_mapping.polyfun_explainability.susie_explain_decode_me_37_chr15_54_925_638 import (
+    POLYFUN_EXPLAIN_CHR15_54,
 )
-from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.fine_mapping.polyfun_explainability.susie_explain_decode_me_37_chr6_26_215_000 import \
-    POLYFUN_EXPLAIN_CHR6_26
-from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.fine_mapping.polyfun_explainability.susie_explain_decode_me_37_chr6_97_505_620 import \
-    POLYFUN_EXPLAIN_CHR6_97
 
 
 def run_polyfun_explain_fine_mapping_decode_me_analysis():
@@ -26,12 +22,11 @@ def run_polyfun_explain_fine_mapping_decode_me_analysis():
     DEFAULT_RUNNER.run(
         (
             # POLYFUN_EXPLAIN_CHR1_174.terminal_tasks()
-
-            POLYFUN_EXPLAIN_CHR6_97.terminal_tasks()
+            # POLYFUN_EXPLAIN_CHR6_97.terminal_tasks()
             # POLYFUN_EXPLAIN_CHR6_26.terminal_tasks()
             # + POLYFUN_EXPLAIN_CHR6_26.terminal_tasks()
             # + POLYFUN_EXPLAIN_CHR6_97.terminal_tasks()
-            # + POLYFUN_EXPLAIN_CHR15_54.terminal_tasks()
+            POLYFUN_EXPLAIN_CHR15_54.terminal_tasks()
             # + POLYFUN_EXPLAIN_CHR17_50.terminal_tasks()
             # + POLYFUN_EXPLAIN_CHR20_47.terminal_tasks()
         ),
@@ -40,11 +35,11 @@ def run_polyfun_explain_fine_mapping_decode_me_analysis():
             group.contrast
             for chrom in [
                 # POLYFUN_EXPLAIN_CHR1_174,
-                POLYFUN_EXPLAIN_CHR6_97
+                # POLYFUN_EXPLAIN_CHR6_97
                 # POLYFUN_EXPLAIN_CHR6_26
                 # POLYFUN_EXPLAIN_CHR6_26,
                 # POLYFUN_EXPLAIN_CHR6_97,
-                # POLYFUN_EXPLAIN_CHR15_54,
+                POLYFUN_EXPLAIN_CHR15_54,
                 # POLYFUN_EXPLAIN_CHR17_50,
                 # POLYFUN_EXPLAIN_CHR20_47,
             ]
