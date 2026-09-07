@@ -499,7 +499,7 @@ def _wrap_callout_label(label: str, max_chars: int = 45) -> tuple[str, float]:
     Parses the "pos:nea:ea (fam ++, fam +, ...)" form produced by the contrast
     task; anything not matching that shape is returned as-is."""
     if len(label) <= max_chars or " (" not in label or not label.endswith(")"):
-        return label, 7.0
+        return label, 10.0
     head, inner = label.split(" (", 1)
     families = inner[:-1].split(", ")
-    return "\n".join([head, *families]), 6.5
+    return "\n".join([head, *families]), 9.5
