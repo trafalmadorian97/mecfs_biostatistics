@@ -160,19 +160,21 @@ By conditioning on the subpopulation, we break the non-causal association betwee
 
 
 
-Unfortunately, human population structure is sufficiently complex that it is impossible to mathematical describe it in full detail.  Thus, we must use a proxy.  Population genetics research indicates a person's subpopulation membership can be well-approximated by the allocation of their genotype to genetic principal components[@price2006principal]. Thus, a strategy to approximately adjust for confounding due to population stratification is as follows[@hoffman2013correcting].
+Unfortunately, human population structure is sufficiently complex that it is impossible to mathematical describe it in full detail.  Thus, we must use a proxy.  Population genetics research indicates a person's subpopulation membership can be well-approximated by the allocation of their genotype to genetic principal components[@price2006principal]. Thus, a strategy to approximately adjust for confounding due to population stratification is to condition on genetic principal components.  In the following derivation, we follow Hoffman (2013)[@hoffman2013correcting].
 
 
-- Let  $X\in\mathbb{R}^{N\times M}$ denote the mean-centered genotype matrix.
-- Let $y\in\mathbb{R}^N$ be the mean-centered phenotype vector.
+- Let $N$ denote the number of study participants.
+- Let $M$ denote the number of genetic variants.
+- Let  $X\in\mathbb{R}^{N\times M}$ denote the genotype matrix, normalized to have column means of 0.
+- Let $y\in\mathbb{R}^N$ be the phenotype vector, normalized to have mean 0.
 - Let $x_j\in\mathbb{R}^N$ be the $j$th column of $X$.
-- Let $\hat\beta_j\in\mathbb{R}$ be the scalar marginal regression coefficient of the $j$th genetic variant.
-- Let $\epsilon\in\mathbb{R}^N$ be the random vector of residual environmental and  genetic effects.
-- Let $X=USV^T$ be the singular value decomposition of $X$.  Thus $U,V^T \in\mathbb{R}^{N\times N}$ are orthogonal matrices, and $S\in\mathbb{R}^{N\times N}$ is a diagonal matrix.
-- Let $q\in\mathbb{Z}_{++}$ be the number of principle components we retain.  Let $U_{1:q}\in\mathbb{R}^{n\times q}$ be the matrix formed from the first $q$ columns of $U$.
+- Let $\hat\beta_j\in\mathbb{R}$ be the scalar marginal regression coefficient of the $j$th genetic variant. This is the quantity we will report in our GWAS summary statistics file for variant $j$.
+- Let $\epsilon\in\mathbb{R}^N$ be the random vector of residual environmental and genetic effects.
+- Let $X=USV^T$ be the singular value decomposition of $X$.  Thus $U,V^T \in\mathbb{R}^{N\times N}$ are orthogonal  and $S\in\mathbb{R}^{N\times N}$ is diagonal.
+- Let $q\in\mathbb{Z}_{++}$ be the number of principal components we retain.  Let $U_{1:q}\in\mathbb{R}^{n\times q}$ be the matrix formed from the first $q$ columns of $U$.
 - Let $\sigma^2_e>0$ denote the scale of the residual effects.
 
-The PC-controlled marginal GWAS regression for genetic variant $j$ is then described by the following model:
+The PC-controlled marginal GWAS regression for genetic variant $j$ is:
 
 $$
 \begin{align}
@@ -211,10 +213,10 @@ where
  
 
 - $R :=U_{1:q}S_{1:q,1:q} \in \mathbb{R}^{N \times q}$ and $S_{1:q,1:q} \in \mathbb{R}^{q\times q}$ is the first $q$ rows and columns of $S$.
-- $\gamma \in \mathbb{R}^q$ is the represents the population structure effect.  Note that in contrast to $\omega$ above, here we put a Bayesian prior on $\gamma$.
+- $\gamma \in \mathbb{R}^q$ is the represents the population structure effect.   In contrast to $\omega$ above,  $\gamma$ has a Bayesian prior.
 
 
-We fit this model via maximum likelihood, integrating out $\gamma$:
+We fit this model via maximum likelihood:
 
 $$
 \begin{align}
@@ -225,8 +227,8 @@ $$
 
 Comparing this model to the PC-control model of the previous section, the following points are salient:
 
-- In both cases, we us principal components to control for subpopulation membership.
-- With the direct PC-control model, we are limited in the number of principal components we can include.  Including too many may result in a model where the number fit parameters approaches or exceeds $N$, the number of study participants, resulting in  poor conditioning or non-uniqueness.  With the LMM, because of the Bayesian prior on $\gamma$, we face no such restriction.
+- In both cases, we use principal components to control for subpopulation membership.
+- With the direct PC-control model, we are limited in the number of principal components we can include.  Including too many may result in a model where the number fit parameters approaches or exceeds $N$, the number of study participants, resulting in poor conditioning or non-uniqueness.  With the LMM we face no such restriction.
 - With the LMM, more variable principal components can have a larger effect on the phenotype.  In contrast, in the direct PC-control model all components equal.
 
 
