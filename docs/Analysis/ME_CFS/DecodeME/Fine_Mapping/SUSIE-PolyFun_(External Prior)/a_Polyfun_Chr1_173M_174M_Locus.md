@@ -58,7 +58,7 @@ These results show that at the chromosome 1 locus, SUSIE is insensitive to confi
 ### Detailed Fine mapping results
 
 
-The plot below illustrates the results of $L=10$ SUSIE fine mapping with and without the PolyFun  prior
+The plot below illustrates the results of $L=10$ SUSIE fine mapping with and without the PolyFun prior
 
 
 {{
