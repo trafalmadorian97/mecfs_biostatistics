@@ -70,10 +70,6 @@ GENE_INFO_NAME_COL = "gene_name"
 GENE_INFO_STRAND_COL = "strand"
 GENE_INFO_CHROM_COL = "chrom"
 
-# Default GWAS genome-wide significance threshold in -log10(p) units, drawn as a
-# dashed grey reference line on the Manhattan panel.
-GWAS_SIGNIFICANCE_MLOG10P = 7.8239087
-
 _gwas_pipe = CompositePipe(
     [ComputePFromBetaSEPipeIfNeeded(), ComputeMlog10pIfNeededPipe()]
 )
@@ -545,7 +541,7 @@ def draw_manhattan_track(
     break_at: float = 20.0,
     max_break_proportion: float = 0.5,  # Cap the top section at 50% height
     saturation_point: float = 100.0,  # Point where we reach max height proportion
-    significance_threshold: float = GWAS_SIGNIFICANCE_MLOG10P,
+    significance_threshold: float = 7.8239087,
 ):
     """
     Generated with Gemini and then modified.
