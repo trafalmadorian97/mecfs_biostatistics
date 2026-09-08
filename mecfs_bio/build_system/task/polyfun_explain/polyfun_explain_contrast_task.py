@@ -599,8 +599,9 @@ def _callout_families(
     1-2 SD -> '+', >2 SD -> '++'. A family must also carry at least
     _CALLOUT_FAMILY_RELATIVE_MIN of the largest family contrast at this variant, so
     a variant whose PIP lift is driven by one family does not also credit
-    negligible runners-up. Top max_families by z, z descending. Families with a
-    degenerate (<= 0) background SD are skipped."""
+    negligible runners-up. Top max_families by family contrast, descending (the
+    +/++ marker still buckets on z). Families with a degenerate (<= 0) background
+    SD are skipped."""
     focal = per_family
     for k, v in focal_key.items():
         focal = focal.filter(pl.col(k) == v)
@@ -620,7 +621,7 @@ def _callout_families(
         z = diff / sd
         if z <= 1.0:
             continue
-        scored.append((z, fam, "++" if z > 2.0 else "+"))
+        scored.append((diff, fam, "++" if z > 2.0 else "+"))
     scored.sort(key=lambda t: t[0], reverse=True)
     return [(fam, marker) for _, fam, marker in scored[:max_families]]
 

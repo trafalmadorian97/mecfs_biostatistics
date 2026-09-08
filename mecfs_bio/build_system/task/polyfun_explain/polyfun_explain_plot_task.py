@@ -97,7 +97,7 @@ _PIP_LABEL_HEADROOM = 0.4
 # height scales with the panel count.
 _FIGURE_WIDTH_IN = 18.0
 _PANEL_HEIGHT_IN = 2.9
-# Raster resolution for the .png (the .svg stays vector).
+# Raster resolution
 _PNG_DPI = 200
 
 
