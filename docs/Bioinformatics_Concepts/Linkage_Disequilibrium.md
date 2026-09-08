@@ -41,7 +41,7 @@ Besides mutation and recombination, LD is affected broadly by historical pattern
 
 ## Genomic Distance
 
-It is frequently useful to measure distance along the genome not in terms of number of base pairs, but in terms of recombination frequency. For this purpose, the preferred unit is the [centimorgan](https://en.wikipedia.org/wiki/Centimorgan). Two genomic positions are one centimorgan apart if there is 1% chance of a recombination event between them per generation[^time_love].
+It is frequently useful to measure distance along the genome not in number of base pairs, but in recombination frequency. For this purpose, the preferred unit is the [centimorgan](https://en.wikipedia.org/wiki/Centimorgan). Two genomic positions are one centimorgan apart if there is 1% chance of a recombination event between them per generation[^time_love].
 
 
 
@@ -57,4 +57,4 @@ The strong linkage disequilibrium between variants in close proximity means that
 
 [^corr_example]: The following example is illustrative.  Consider 3 variants A, B and C. If all 3 variants are independent, the correlation matrix $R$ will equal the identity matrix.  If A and B are independent, but C is the [exclusive or](https://en.wikipedia.org/wiki/Exclusive_or) of A and B, their correlation matrix is also the identity matrix.
 
-[^time_love]: For a readable popular-science account of the early history of genetics, and the development of the centimorgan from the studies of fruit-fly mutants, see _Time, Love, and Memory_[@weiner2000time].
+[^time_love]: For a readable popular-science account of the early history of genetics and the development of the centimorgan from the studies of fruit-fly mutants, see _Time, Love, and Memory_[@weiner2000time].
