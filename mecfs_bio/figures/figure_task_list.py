@@ -68,6 +68,8 @@ from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.decode_me_region_plot_rabga
 from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.decode_me_sldsc import (
     DECODE_ME_S_LDSC,
 )
+from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.fine_mapping.polyfun_explainability.susie_explain_decode_me_37_chr17_50_237_377 import \
+    POLYFUN_EXPLAIN_CHR17_50
 from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.fine_mapping.polyfun_explainability.susie_explain_decode_me_37_chr1_174_128_548 import (
     POLYFUN_EXPLAIN_CHR1_174,
 )
@@ -260,6 +262,11 @@ ALL_FIGURE_TASKS: list[Task] = [
     POLYFUN_EXPLAIN_CHR15_54.groups_by_label["l10"].plot_svg,
     POLYFUN_EXPLAIN_CHR15_54.groups_by_label["l10"].detailed_table,
     POLYFUN_EXPLAIN_CHR15_54.groups_by_label["l10"].per_variant_annotation_table,
+    POLYFUN_EXPLAIN_CHR17_50.upset_all_polyfun,
+    POLYFUN_EXPLAIN_CHR17_50.upset_cs50_polyfun,
+    POLYFUN_EXPLAIN_CHR17_50.groups_by_label["l10"].plot_svg,
+    POLYFUN_EXPLAIN_CHR17_50.groups_by_label["l10"].detailed_table,
+    POLYFUN_EXPLAIN_CHR17_50.groups_by_label["l10"].per_variant_annotation_table,
     # H-magma
     DECODE_ME_H_MAGMA_ASSET_GENERATOR.labeled_by_annotation()[
         "adult_brain"

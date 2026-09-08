@@ -809,8 +809,8 @@ def _per_variant_annotation_table(
 _DISPLAY_BASE_COLS = [
     DISP_CHR,
     DISP_POS,
-    DISP_EA,
     DISP_NEA,
+    DISP_EA,
     DISP_CS_PF,
     DISP_CS_U,
     DISP_PIP_PF,
