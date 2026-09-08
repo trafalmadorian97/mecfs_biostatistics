@@ -91,6 +91,13 @@ PLOT_PNG_FILENAME = "explain_plot.png"
 PLOT_SVG_FILENAME = "explain_plot.svg"
 # PIP units of empty space kept above the tallest stem for the callout labels.
 _PIP_LABEL_HEADROOM = 0.4
+# Callout font sizes as (single-line, wrapped-multi-line) pairs. The larger pair
+# is used by default; once the panel carries _CALLOUT_CROWDED_COUNT or more
+# callouts the smaller pair keeps a dense locus from turning into a wall of
+# overlapping labels.
+_CALLOUT_FONT_DEFAULT = (10.0, 9.5)
+_CALLOUT_FONT_CROWDED = (7.0, 6.5)
+_CALLOUT_CROWDED_COUNT = 3
 # Figure sizing. The panels stack vertically sharing the x-axis; the figure is
 # sized well beyond matplotlib's defaults so the Manhattan points, PIP stems, and
 # gene labels stay legible when the figure fills a laptop screen. Width is fixed;
@@ -457,10 +464,18 @@ def _place_callouts(
         return
     xs = callouts[GWASLAB_POS_COL].to_numpy().astype(float).tolist()
     ys = callouts[CALLOUT_PIP_PF_COL].to_numpy().astype(float).tolist()
-    # A long (many-family) callout is wrapped one family per line at a smaller
-    # font, keeping its box narrow so textalloc can seat it without crossing a
-    # neighbouring stem; short callouts render unchanged (font 7, single line).
-    wrapped = [_wrap_callout_label(t) for t in callouts[CALLOUT_LABEL_COL].to_list()]
+    # A long (many-family) callout is wrapped one family per line, keeping its box
+    # narrow so textalloc can seat it without crossing a neighbouring stem; short
+    # callouts render single-line. The whole panel drops to the smaller font pair
+    # once it is crowded (>= _CALLOUT_CROWDED_COUNT callouts).
+    fonts = (
+        _CALLOUT_FONT_CROWDED
+        if callouts.height >= _CALLOUT_CROWDED_COUNT
+        else _CALLOUT_FONT_DEFAULT
+    )
+    wrapped = [
+        _wrap_callout_label(t, fonts) for t in callouts[CALLOUT_LABEL_COL].to_list()
+    ]
     texts = [text for text, _ in wrapped]
     sizes = [size for _, size in wrapped]
     # Every stem (vertical line from 0 to its PIP) is an obstacle to route labels
@@ -493,16 +508,20 @@ def _place_callouts(
     )
 
 
-def _wrap_callout_label(label: str, max_chars: int = 45) -> tuple[str, float]:
+def _wrap_callout_label(
+    label: str, fonts: tuple[float, float], max_chars: int = 45
+) -> tuple[str, float]:
     """Lay out one callout label. A label longer than max_chars (a variant with
-    several or verbose annotation families) is wrapped to one family per line at a
-    smaller font, so its box is only as wide as the longest single family and can
-    be placed clear of neighbouring stems. Shorter labels are returned unchanged.
+    several or verbose annotation families) is wrapped to one family per line, so
+    its box is only as wide as the longest single family and can be placed clear of
+    neighbouring stems. Shorter labels are returned unchanged. fonts is the
+    (single-line, wrapped) size pair the caller chose for the panel's crowding.
 
     Parses the "pos:nea:ea (fam ++, fam +, ...)" form produced by the contrast
     task; anything not matching that shape is returned as-is."""
+    single_line_size, wrapped_size = fonts
     if len(label) <= max_chars or " (" not in label or not label.endswith(")"):
-        return label, 10
+        return label, single_line_size
     head, inner = label.split(" (", 1)
     families = inner[:-1].split(", ")
-    return "\n".join([head, *families]), 9.5
+    return "\n".join([head, *families]), wrapped_size

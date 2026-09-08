@@ -16,7 +16,9 @@ from mecfs_bio.build_system.task.harmonize_gwas_with_reference_table_via_chrom_p
     ChromRange,
 )
 from mecfs_bio.build_system.task.pipes.identity_pipe import IdentityPipe
-from mecfs_bio.build_system.task.polyfun_explain.polyfun_explain_contrast_task import SecondaryPositionFromSnpid
+from mecfs_bio.build_system.task.polyfun_explain.polyfun_explain_contrast_task import (
+    SecondaryPositionFromSnpid,
+)
 
 POLYFUN_EXPLAIN_CHR6_97 = generate_assets_polyfun_explain_fine_map(
     chrom=6,
@@ -29,6 +31,5 @@ POLYFUN_EXPLAIN_CHR6_97 = generate_assets_polyfun_explain_fine_map(
     ),  # 4/(1/cases + 1/controls)
     palindrome_strategy="keep",
     chrom_range=ChromRange(6, 97_500_000, 99_000_000),
-
     secondary_position_from_snpid=SecondaryPositionFromSnpid(build_label="hg38"),
 )

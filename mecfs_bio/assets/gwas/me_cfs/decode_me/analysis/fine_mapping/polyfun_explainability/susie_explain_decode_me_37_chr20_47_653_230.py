@@ -16,7 +16,9 @@ from mecfs_bio.build_system.task.harmonize_gwas_with_reference_table_via_chrom_p
     ChromRange,
 )
 from mecfs_bio.build_system.task.pipes.identity_pipe import IdentityPipe
-from mecfs_bio.build_system.task.polyfun_explain.polyfun_explain_contrast_task import SecondaryPositionFromSnpid
+from mecfs_bio.build_system.task.polyfun_explain.polyfun_explain_contrast_task import (
+    SecondaryPositionFromSnpid,
+)
 
 POLYFUN_EXPLAIN_CHR20_47 = generate_assets_polyfun_explain_fine_map(
     chrom=20,

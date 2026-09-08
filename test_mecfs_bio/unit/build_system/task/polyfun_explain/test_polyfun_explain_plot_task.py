@@ -38,12 +38,13 @@ from test_mecfs_bio.unit.build_system.task.polyfun_explain.test_polyfun_explain_
 
 
 def test_wrap_callout_label_short_unchanged_long_wrapped():
+    fonts = (10.0, 9.5)
     short = "173855298:A:T (conserved ++, coding +)"
-    text, size = _wrap_callout_label(short)
+    text, _size = _wrap_callout_label(short, fonts)
     assert text == short
 
     long = "47731228:A:C (coding ++, ld related continuous +, open chromatin +)"
-    text, size = _wrap_callout_label(long)
+    text, _size = _wrap_callout_label(long, fonts)
     assert text == (
         "47731228:A:C\ncoding ++\nld related continuous +\nopen chromatin +"
     )

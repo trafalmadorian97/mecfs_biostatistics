@@ -47,6 +47,12 @@ susie_polyfun_data_table(src="docs/_figs/decode_me_polyfun_explainchr20_47000000
 id="chr20_polyfun_susie_table_l10")
 }}
 
+The next table shows the annotations of the top variants in detail.
+
+
+{{
+susie_polyfun_variant_detail_table(src="assets/base_asset_store/gwas/ME_CFS/DecodeME/analysis/decode_me_polyfun_explainchr20_47000000_48200000_palindromes_keep_l10_explain_detailed_table.parquet" ,id="chr20_polyfun_susie_characterization_l10"
+}}
 
 ### Results ($L=1$)
 
@@ -63,3 +69,15 @@ susie_polyfun_explain_plot("docs/_figs/decode_me_polyfun_explainchr20_47000000_4
 susie_polyfun_data_table(src="docs/_figs/decode_me_polyfun_explainchr20_47000000_48200000_palindromes_keep_l1_explain_detailed_table.parquet",
 id="chr20_polyfun_susie_table_l1")
 }}
+
+The next table shows the annotations of the top variants in detail.
+
+{{
+susie_polyfun_variant_detail_table(src="assets/base_asset_store/gwas/ME_CFS/DecodeME/analysis/decode_me_polyfun_explainchr20_47000000_48200000_palindromes_keep_l1_explain_per_variant_annotation_table.parquet" ,id="chr20_polyfun_susie_characterization_l1"
+}}
+
+
+### Analysis
+
+Given the significance differences between the SUSIE results, it is difficult to know which to credit. As was the case in the uniform-prior SUSIE runs, the $L=10$ and $L=2$ PolyFun-prior runs assigns very high confidence to **20:47743125:C:A**  being a causal SNP, while the $L=1$ and strict $L=10$ run does not weight it at all.
+

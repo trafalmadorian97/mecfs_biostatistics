@@ -68,13 +68,14 @@ from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.decode_me_region_plot_rabga
 from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.decode_me_sldsc import (
     DECODE_ME_S_LDSC,
 )
-from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.fine_mapping.polyfun_explainability.susie_explain_decode_me_37_chr17_50_237_377 import \
-    POLYFUN_EXPLAIN_CHR17_50
 from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.fine_mapping.polyfun_explainability.susie_explain_decode_me_37_chr1_174_128_548 import (
     POLYFUN_EXPLAIN_CHR1_174,
 )
 from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.fine_mapping.polyfun_explainability.susie_explain_decode_me_37_chr15_54_925_638 import (
     POLYFUN_EXPLAIN_CHR15_54,
+)
+from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.fine_mapping.polyfun_explainability.susie_explain_decode_me_37_chr17_50_237_377 import (
+    POLYFUN_EXPLAIN_CHR17_50,
 )
 from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.fine_mapping.with_palindromes.susie_finemap_decode_me_37_chr1_174_128_548_locus_palindromes import (
     DECODE_ME_GWAS_37_CHR1_174_128_548_FINEMAP_PALINDROMES,
