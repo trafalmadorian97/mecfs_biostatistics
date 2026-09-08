@@ -20,7 +20,7 @@ In this step:
   ) was used to assign RSIDs to SNPs.
 - Magma's default proximity-based rules were used to assign SNPs to genes.
 
-MAGMA produces a table of genes, effect sizes, and p values.  Filtering these genes via the Benjamini-Hochberg procedure[@benjamini1995controlling] at a false discovery rate of 0.01, and joining with a database of gene descriptions from [Ensembl Biomart](https://useast.ensembl.org/info/data/biomart/index.html) produces the following table:
+MAGMA produces a table of genes, effect sizes, and p values.  Filtering these genes via the Benjamini-Hochberg procedure[@benjamini1995controlling] at a false discovery rate of 0.01, and joining with a database of gene descriptions from [Ensembl Biomart](https://jun2026.archive.ensembl.org/info/data/biomart/index.html) produces the following table:
 
 {{ markdown_table("docs/_figs/decode_me_gwas_1_magma_gene_table_markdown.mdx", title="MAGMA Genes") }}
 
