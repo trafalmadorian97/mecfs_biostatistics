@@ -21,13 +21,13 @@ These plots show that in general, the variant sets selected by the four runs are
 
 {{
 png_embed("docs/_figs/decode_me_polyfun_explainchr17_50000000_51000000_palindromes_keep_polyfun_upset_all_cs_variants.png",
-alt="upset plot for chrom 15")
+alt="upset plot for chrom 17")
 }}
 
 
 {{
 png_embed("docs/_figs/decode_me_polyfun_explainchr17_50000000_51000000_palindromes_keep_polyfun_upset_cs50_variants.png",
-alt="50 PIP upset plot for chrom 15")
+alt="50 PIP upset plot for chrom 17")
 }}
 
 

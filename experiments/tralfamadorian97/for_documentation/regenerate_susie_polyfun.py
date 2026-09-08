@@ -4,6 +4,8 @@ from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.fine_mapping.polyfun_explai
     POLYFUN_EXPLAIN_CHR17_50
 from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.fine_mapping.polyfun_explainability.susie_explain_decode_me_37_chr1_174_128_548 import \
     POLYFUN_EXPLAIN_CHR1_174
+from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.fine_mapping.polyfun_explainability.susie_explain_decode_me_37_chr20_47_653_230 import \
+    POLYFUN_EXPLAIN_CHR20_47
 from mecfs_bio.figures.key_scripts.push_figures import push_figures
 from mecfs_bio.figures.key_scripts.regenerate_figures import regenerate_figures
 
@@ -23,18 +25,20 @@ def go():
             # POLYFUN_EXPLAIN_CHR15_54.groups_by_label["l10"].detailed_table,
             # POLYFUN_EXPLAIN_CHR15_54.groups_by_label["l10"].per_variant_annotation_table,
 
-            POLYFUN_EXPLAIN_CHR17_50.upset_all_polyfun,
-            POLYFUN_EXPLAIN_CHR17_50.upset_cs50_polyfun,
-            POLYFUN_EXPLAIN_CHR17_50.groups_by_label["l10"].plot_svg,
-            POLYFUN_EXPLAIN_CHR17_50.groups_by_label["l10"].detailed_table,
-            POLYFUN_EXPLAIN_CHR17_50.groups_by_label["l10"].per_variant_annotation_table,
-
-            POLYFUN_EXPLAIN_CHR17_50.upset_all_polyfun,
-            POLYFUN_EXPLAIN_CHR17_50.upset_cs50_polyfun,
-            POLYFUN_EXPLAIN_CHR17_50.groups_by_label["l10"].plot_svg,
-            POLYFUN_EXPLAIN_CHR17_50.groups_by_label["l10"].detailed_table,
-            POLYFUN_EXPLAIN_CHR17_50.groups_by_label["l10"].per_variant_annotation_table,
-
+            # POLYFUN_EXPLAIN_CHR17_50.upset_all_polyfun,
+            # POLYFUN_EXPLAIN_CHR17_50.upset_cs50_polyfun,
+            # POLYFUN_EXPLAIN_CHR17_50.groups_by_label["l10"].plot_svg,
+            # POLYFUN_EXPLAIN_CHR17_50.groups_by_label["l10"].detailed_table,
+            # POLYFUN_EXPLAIN_CHR17_50.groups_by_label["l10"].per_variant_annotation_table,
+            #
+            POLYFUN_EXPLAIN_CHR20_47.upset_all_polyfun,
+            POLYFUN_EXPLAIN_CHR20_47.upset_cs50_polyfun,
+            POLYFUN_EXPLAIN_CHR20_47.groups_by_label["l10"].plot_svg,
+            POLYFUN_EXPLAIN_CHR20_47.groups_by_label["l10"].detailed_table,
+            POLYFUN_EXPLAIN_CHR20_47.groups_by_label["l10"].per_variant_annotation_table,
+            POLYFUN_EXPLAIN_CHR20_47.groups_by_label["l1"].plot_svg,
+            POLYFUN_EXPLAIN_CHR20_47.groups_by_label["l1"].detailed_table,
+            POLYFUN_EXPLAIN_CHR20_47.groups_by_label["l1"].per_variant_annotation_table,
         ]
     )
     # push_figures()
