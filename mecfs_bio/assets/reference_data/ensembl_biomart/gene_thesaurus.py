@@ -2,8 +2,15 @@
 Download a table containing Ensembl IDs, Entrez IDs, Gene symbols, and gene descriptions
 for all known human genes.
 
-Original source:
+Original source was:
 Ensembl Biomart (https://useast.ensembl.org/info/data/biomart/index.html)
+
+However, this source now seems to have been discontinued by ensembl:
+https://support.bioconductor.org/p/9163690/#9163693
+
+As a replacement, this data now should be accessible via the archive:
+https://jun2026.archive.ensembl.org/info/data/biomart/index.html
+
 """
 
 from pathlib import PurePath
