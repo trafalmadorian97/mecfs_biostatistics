@@ -32,7 +32,7 @@ def _runner_func(tasks: Sequence[Task]) -> Mapping[AssetId, Asset]:
         else:
             to_rebuild.append(task)
     return DEFAULT_RUNNER.run(
-        targets=list(tasks), incremental_save=True, must_rebuild_transitive=to_rebuild
+        targets=list(tasks), incremental_save=False, must_rebuild_transitive=to_rebuild
     )
 
 

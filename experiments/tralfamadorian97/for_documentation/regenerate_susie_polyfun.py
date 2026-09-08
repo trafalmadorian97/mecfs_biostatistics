@@ -2,6 +2,7 @@ from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.fine_mapping.polyfun_explai
     POLYFUN_EXPLAIN_CHR15_54
 from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.fine_mapping.polyfun_explainability.susie_explain_decode_me_37_chr1_174_128_548 import \
     POLYFUN_EXPLAIN_CHR1_174
+from mecfs_bio.figures.key_scripts.push_figures import push_figures
 from mecfs_bio.figures.key_scripts.regenerate_figures import regenerate_figures
 
 
@@ -22,6 +23,7 @@ def go():
 
         ]
     )
+    push_figures()
 
 if __name__ == '__main__':
     go()
