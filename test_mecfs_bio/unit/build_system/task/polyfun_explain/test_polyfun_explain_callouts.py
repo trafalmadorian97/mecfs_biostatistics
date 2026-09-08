@@ -60,6 +60,25 @@ def test_callout_families_buckets_and_orders_by_z():
     assert result == [("conserved", "++"), ("coding", "+")]
 
 
+def test_callout_families_drops_negligible_runner_up():
+    # When one family dominates a variant's PIP lift, a runner-up whose per-family
+    # contrast is below _CALLOUT_FAMILY_RELATIVE_MIN of the top contrast is dropped
+    # even if it clears the background-SD bar on its own.
+    focal = _key(123)
+    per_family = pl.DataFrame(
+        [
+            {**focal, FAMILY_COL: "conserved", FAMILY_CONTRAST_COL: 10.0},
+            {**focal, FAMILY_COL: "coding", FAMILY_CONTRAST_COL: 0.3},
+        ]
+    )
+    # coding's z = 0.3 / 0.1 = 3 would normally earn a "++", but 0.3 is below 5% of
+    # the dominant 10.0 contrast, so only conserved survives.
+    family_sd = {"conserved": 1.0, "coding": 0.1}
+    assert _callout_families(per_family, focal, family_sd, max_families=3) == [
+        ("conserved", "++")
+    ]
+
+
 def test_callout_families_skips_degenerate_sd():
     focal = _key(123)
     per_family = pl.DataFrame(
