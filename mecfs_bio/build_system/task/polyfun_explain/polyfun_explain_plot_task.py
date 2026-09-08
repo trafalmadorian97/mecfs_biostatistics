@@ -289,6 +289,9 @@ def _render(
     r2 = ld[lead, :] ** 2
     sc = ax0.scatter(x, neglogp, c=r2, cmap="viridis", vmin=0, vmax=1, s=10)
     sc.set_rasterized(True)
+    # Mark the lead (min-p) variant with a black triangle, matching
+    # SusieStackPlotTask's Manhattan panel.
+    ax0.scatter(x[lead], neglogp[lead], s=35, marker="^", c="black")
     # Dashed grey reference line at the default GWAS genome-wide significance
     # threshold (matches SusieStackPlotTask's Manhattan panel).
     ax0.axhline(
@@ -499,7 +502,7 @@ def _wrap_callout_label(label: str, max_chars: int = 45) -> tuple[str, float]:
     Parses the "pos:nea:ea (fam ++, fam +, ...)" form produced by the contrast
     task; anything not matching that shape is returned as-is."""
     if len(label) <= max_chars or " (" not in label or not label.endswith(")"):
-        return label, 9.5
+        return label, 10
     head, inner = label.split(" (", 1)
     families = inner[:-1].split(", ")
-    return "\n".join([head, *families]), 9.0
+    return "\n".join([head, *families]), 9.5

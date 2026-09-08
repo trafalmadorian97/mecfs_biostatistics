@@ -8,11 +8,9 @@ covers all of them.
 """
 
 from mecfs_bio.analysis.runner.default_runner import DEFAULT_RUNNER
-from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.fine_mapping.polyfun_explainability.susie_explain_decode_me_37_chr17_50_237_377 import (
-    POLYFUN_EXPLAIN_CHR17_50,
+from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.fine_mapping.polyfun_explainability.susie_explain_decode_me_37_chr1_174_128_548 import (
+    POLYFUN_EXPLAIN_CHR1_174,
 )
-from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.fine_mapping.polyfun_explainability.susie_explain_decode_me_37_chr1_174_128_548 import \
-    POLYFUN_EXPLAIN_CHR1_174
 
 
 def run_polyfun_explain_fine_mapping_decode_me_analysis():

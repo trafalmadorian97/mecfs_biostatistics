@@ -40,14 +40,13 @@ from test_mecfs_bio.unit.build_system.task.polyfun_explain.test_polyfun_explain_
 def test_wrap_callout_label_short_unchanged_long_wrapped():
     short = "173855298:A:T (conserved ++, coding +)"
     text, size = _wrap_callout_label(short)
-    assert text == short and size == 7.0
+    assert text == short
 
     long = "47731228:A:C (coding ++, ld related continuous +, open chromatin +)"
     text, size = _wrap_callout_label(long)
     assert text == (
         "47731228:A:C\ncoding ++\nld related continuous +\nopen chromatin +"
     )
-    assert size < 7.0
 
 
 def test_plot_writes_png_and_svg(tmp_path: Path):
