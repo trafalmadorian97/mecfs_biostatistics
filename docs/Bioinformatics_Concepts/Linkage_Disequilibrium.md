@@ -1,18 +1,18 @@
 # Linkage Disequilibrium
-_Linkage disequilibrium_ (LD) refers to statistical dependence between genetic variants. LD is central to statistical genomics[^handbook_note][^name_note].
+Linkage disequilibrium (LD) refers to statistical dependence between genetic variants. LD is central to statistical genomics[^handbook_note][^name_note].
 
 ## Measures
 
 - When we are interested in patterns of LD across a genomic region with $n$ variants, it is common to report the LD matrix $R\in\mathbb{R}^{n\times n}$, whose $(i,j)$ component is $r_{i,j}$ the [Pearson correlation](https://en.wikipedia.org/wiki/Pearson_correlation_coefficient) between variant $i$ and variant $j$.
-- Note, however, that this matrix $R$ reflects only pairwise dependence, and so is not a complete characterization of LD.  In particular, there are many higher-order dependence structures consistent with any given $R$ matrix[^corr_example].
+- Note, however, that this matrix $R$ reflects only pairwise dependence, and so is not a complete characterization of LD.  In particular, there are many possible higher-order dependence structures consistent with any given $R$ matrix[^corr_example].
 
 ## Drivers
 
-There are two main processes that drive LD: mutation and recombination.
+There are two main drivers of LD: mutation and recombination.
 
 ### Mutation
 
-For simplicity, first consider LD in the  absence of recombination, as in the case in mitochondrial DNA and certain regions of the Y chromosome.  In such recombination-free regions, the distance between two variants is irrelevant to their LD. Instead, LD is a function of historical mutations, and the fates of populations containing these mutations.  
+For simplicity, first consider LD in the absence of recombination, as occurs in mitochondrial DNA and certain regions of the Y chromosome.  In such recombination-free regions, the distance between two variants is irrelevant to their LD. Instead, LD is a function of historical mutations, and the fates of populations containing these mutations.  
 
 Figure 7 from the Hapmap paper[@international2005haplotype] illustrates the concept: variants in non-recombining regions tends to be highly correlated if they arose on the same branch of a genealogical tree.
 
@@ -24,7 +24,7 @@ Figure 7 from the Hapmap paper[@international2005haplotype] illustrates the conc
 ### Recombination
 
 
-Besides mutation, the other major driver of LD patterns in the eukaryotic genome is recombination. In regions subject to recombination, LD decays as the distance between variants increases, because the odds of an intervening [recombination event](https://en.wikipedia.org/wiki/Genetic_recombination) correspondingly increase. However, due to the complex structure of eukaryotic DNA, the odds of recombination events are non-uniform across a chromosome. Thus, the rate of LD decay with genomic distance is not constant. Instead, LD displays a block-like structure, with block boundaries determined by recombination hotspots.
+Besides mutation, the other major driver of LD in the eukaryotic genome is recombination. In regions subject to recombination, LD decays as the distance between variants increases, because the odds of an intervening [recombination event](https://en.wikipedia.org/wiki/Genetic_recombination) correspondingly increase. However, due to the complex structure of eukaryotic DNA, the odds of recombination events are non-uniform across a chromosome. Thus, the rate of LD decay with genomic distance is not constant. Instead, LD displays a block-like structure, with block boundaries determined by recombination hotspots.
 
 
 As an illustrative example, here is a plot of the absolute value of the correlation between genetic variants in a region of chromosome 1.  This plot was generated from the [UK Biobank LD matrices stored on AWS OpenData](https://registry.opendata.aws/ukbb-ld/).  In the plot, the x and y axes correspond genomic position, while color indicates absolute correlation.
@@ -41,7 +41,7 @@ Besides mutation and recombination, LD is affected broadly by historical pattern
 
 ## Genomic Distance
 
-It is frequently useful to measure distance along the genome not in terms of physical base pairs, but in terms of recombination frequency. For this purpose, the preferred unit is the [centimorgan](https://en.wikipedia.org/wiki/Centimorgan). Two genomic positions are one centimorgan apart if there is 1% chance of a recombination event between them per generation[^time_love].
+It is frequently useful to measure distance along the genome not in terms of number of base pairs, but in terms of recombination frequency. For this purpose, the preferred unit is the [centimorgan](https://en.wikipedia.org/wiki/Centimorgan). Two genomic positions are one centimorgan apart if there is 1% chance of a recombination event between them per generation[^time_love].
 
 
 
