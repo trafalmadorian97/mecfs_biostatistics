@@ -144,8 +144,13 @@ def define_env(env):
         alt : str
             Alt text for the image.
         caption : str
-            Optional caption rendered as a <figcaption> below the image. When
-            provided the image is wrapped in a <figure>.
+            Optional caption rendered as a full-width centered paragraph below
+            the image. When provided the image is wrapped in a full-width div
+            rather than a <figure>: Material styles ``.md-typeset figure`` with
+            ``width: fit-content``, which shrinks a <figure> (and its caption) to
+            the image's rendered width, so a long caption gets squished into a
+            narrow central column. The full-width div matches how plotly_embed
+            and data_table render their captions.
         """
         if not Path(src).is_file():
             raise FileNotFoundError(
@@ -163,10 +168,10 @@ def define_env(env):
         img = f'<img src="{relative_url}" alt="{alt}" style="max-width:100%; height:auto;">'
         if caption:
             return (
-                f'<figure style="margin:0;">\n'
+                f'<div style="width:100%; margin:0; text-align:center;">\n'
                 f"{img}\n"
-                f'<figcaption style="text-align:center; font-style:italic; margin-top:0.5em;">{caption}</figcaption>\n'
-                f"</figure>"
+                f'<p style="width:100%; text-align:center; font-style:italic; margin-top:0.5em;">{caption}</p>\n'
+                f"</div>"
             )
         return img
 
