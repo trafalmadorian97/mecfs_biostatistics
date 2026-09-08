@@ -29,6 +29,12 @@ def go():
             POLYFUN_EXPLAIN_CHR17_50.groups_by_label["l10"].detailed_table,
             POLYFUN_EXPLAIN_CHR17_50.groups_by_label["l10"].per_variant_annotation_table,
 
+            POLYFUN_EXPLAIN_CHR17_50.upset_all_polyfun,
+            POLYFUN_EXPLAIN_CHR17_50.upset_cs50_polyfun,
+            POLYFUN_EXPLAIN_CHR17_50.groups_by_label["l10"].plot_svg,
+            POLYFUN_EXPLAIN_CHR17_50.groups_by_label["l10"].detailed_table,
+            POLYFUN_EXPLAIN_CHR17_50.groups_by_label["l10"].per_variant_annotation_table,
+
         ]
     )
     # push_figures()
