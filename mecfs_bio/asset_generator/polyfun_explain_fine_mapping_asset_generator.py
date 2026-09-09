@@ -13,6 +13,7 @@ helper so the existing, separately tested fine-mapping generator is left
 untouched.
 """
 
+from functools import cached_property
 from pathlib import PurePath
 from typing import Mapping
 
@@ -194,7 +195,7 @@ class PolyfunExplainOuterGroup:
         out += [self.upset_all_polyfun, self.upset_cs50_polyfun]
         return out
 
-    @property
+    @cached_property
     def groups_by_label(self) -> Mapping[str, PolyfunExplainGroup]:
         return {group.label: group for group in self.groups}
 

@@ -94,7 +94,7 @@ _CALLOUT_SCHEMA: dict[str, pl.DataType] = {
     CALLOUT_PIP_U_COL: pl.Float64(),
     CALLOUT_LABEL_COL: pl.String(),
 }
-_MAX_CALLOUT_FAMILIES = 3
+_MAX_CALLOUT_FAMILIES = 2
 # A family is only labelled when its per-family contrast gamma*(a_ic - abar_c) is
 # at least this fraction of the largest family contrast at the same variant. When
 # one family dominates a variant's PIP lift, this drops runners-up whose own
@@ -809,8 +809,8 @@ def _per_variant_annotation_table(
 _DISPLAY_BASE_COLS = [
     DISP_CHR,
     DISP_POS,
-    DISP_EA,
     DISP_NEA,
+    DISP_EA,
     DISP_CS_PF,
     DISP_CS_U,
     DISP_PIP_PF,
