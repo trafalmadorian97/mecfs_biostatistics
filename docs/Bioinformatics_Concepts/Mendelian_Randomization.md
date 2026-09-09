@@ -84,6 +84,12 @@ B --> C[Exposure];
 C --> D[Outcome];
 A --> E[Protein 2];
 E ----> D;
+
+
+classDef normal fill:transparent,stroke:transparent;
+classDef conditioned fill:transparent,stroke:#444,stroke-width:2px;
+
+class A,B,C,D,E normal;
 ```
 
 A genetic variant affects the levels of two proteins.  One protein affects the outcome through the exposure, while the other affects the outcome independently of the exposure. If we believe the [Omnigenic Model](Omnigenic_Model.md), we should expect this kind of horizontal pleiotropy to be relatively common.
