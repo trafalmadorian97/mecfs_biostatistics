@@ -499,12 +499,15 @@ def _place_callouts(
         textsize=sizes,
         linecolor="black",
         linewidth=0.6,
-        direction="northeast",
+        direction=  ["northeast", "northwest", "north", "east"] ,
+
         min_distance=0.03,
-        max_distance=5,#0.5,
+        max_distance=0.8,
         xlims=xlims,
         ylims=ylims,
         avoid_label_lines_overlap=True,
+        avoid_crossing_label_lines=True,
+        nbr_candidates=5000,
     )
 
 
