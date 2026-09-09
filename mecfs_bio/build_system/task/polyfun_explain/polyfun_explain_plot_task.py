@@ -439,11 +439,18 @@ def _plot_pip_panel(
     label: str,
 ) -> None:
     """Draw one PIP panel: credible-set-colored stems on the left-column axis and
-    a per-credible-set legend in the reserved right-column cell."""
+    a per-credible-set legend in the reserved right-column cell. The legend is
+    numbered by SUSIE's own credible-set index (L2 -> "CS 2") so it matches the
+    contrast task's detailed table (cs_pf/cs_u), rather than positionally."""
     ax_pip = axes[row]
     legend_ax = fig.add_subplot(gs[row, 1])
     legend_ax.axis("off")
-    plot_susie_track(susie_cs_df=cs_df, ax_pip=ax_pip, pip_legend_ax=legend_ax)
+    plot_susie_track(
+        susie_cs_df=cs_df,
+        ax_pip=ax_pip,
+        pip_legend_ax=legend_ax,
+        cs_label_mode="susie_index",
+    )
     ax_pip.set_ylabel(label)
 
 
