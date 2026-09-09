@@ -96,7 +96,7 @@ _PIP_LABEL_HEADROOM = 0.4
 # callouts the smaller pair keeps a dense locus from turning into a wall of
 # overlapping labels.
 _CALLOUT_FONT_DEFAULT = (10.0, 9.5)
-_CALLOUT_FONT_CROWDED = (7.0, 6.5)
+_CALLOUT_FONT_CROWDED = (8.0, 7.5)
 _CALLOUT_CROWDED_COUNT = 3
 # Figure sizing. The panels stack vertically sharing the x-axis; the figure is
 # sized well beyond matplotlib's defaults so the Manhattan points, PIP stems, and
@@ -501,7 +501,7 @@ def _place_callouts(
         linewidth=0.6,
         direction="northeast",
         min_distance=0.03,
-        max_distance=0.5,
+        max_distance=5,#0.5,
         xlims=xlims,
         ylims=ylims,
         avoid_label_lines_overlap=True,
