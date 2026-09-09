@@ -12,6 +12,7 @@ mirrors generate_assets_broad_ukbb_fine_map but is inlined here as a private
 helper so the existing, separately tested fine-mapping generator is left
 untouched.
 """
+
 from functools import cached_property
 from pathlib import PurePath
 from typing import Mapping
