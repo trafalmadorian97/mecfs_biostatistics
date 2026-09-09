@@ -683,6 +683,22 @@ def draw_manhattan_track(
     return ax  # Return the single axis for x-linking later
 
 
+CredibleSetLabelMode = Literal["positional", "susie_index"]
+
+
+def _credible_set_label(cs_key, index: int, mode: CredibleSetLabelMode) -> str:
+    """Legend label for one credible set. "positional" numbers the sets 1..N in
+    plotting order (the original behavior). "susie_index" uses SUSIE's own
+    credible-set index parsed from the group's cs label (L2 -> "CS 2"), so the
+    legend agrees with tables that report that index (e.g. the polyfun-explain
+    detailed table's cs_pf/cs_u columns, which strip the same L prefix). Falls
+    back to the raw label if it does not start with L."""
+    if mode == "positional":
+        return f"CS {index + 1}"
+    cs_value = cs_key[0] if isinstance(cs_key, tuple) else cs_key
+    return f"CS {str(cs_value).removeprefix('L')}"
+
+
 def plot_susie_track(
     susie_cs_df: pl.DataFrame | None,
     ax_pip,
@@ -690,9 +706,14 @@ def plot_susie_track(
     susie_cs_col: str = CS_COLUMN,
     susie_pip_col: str = PIP_COLUMN,
     susie_pos_col: str = GWASLAB_POS_COL,
+    cs_label_mode: CredibleSetLabelMode = "positional",
 ):
     """
-    Plot SUSIE pip using a bar graph colored by credible set
+    Plot SUSIE pip using a bar graph colored by credible set.
+
+    cs_label_mode selects how the legend numbers credible sets: "positional"
+    (default) numbers them 1..N in plotting order; "susie_index" uses SUSIE's own
+    L-index (see _credible_set_label).
     """
     if susie_cs_df is None:
         return
@@ -703,17 +724,17 @@ def plot_susie_track(
             susie_cs_df.group_by(susie_cs_col, maintain_order=True)
         ):
             color = palette[i % len(palette)]
+            label = _credible_set_label(cs, i, cs_label_mode)
             ax_pip.vlines(
                 sub[susie_pos_col].to_numpy(),
                 0.0,
                 sub[susie_pip_col].to_numpy(),
                 linewidth=1.5,
-                label=f"CS {i + 1}",
+                label=label,
                 color=color,
             )
-            handle = Line2D([0], [0], color=color, lw=2, label=f"CS {i + 1}")
+            handle = Line2D([0], [0], color=color, lw=2, label=label)
             pip_traces.append(handle)
-            # pip_trace_labels.append(f"CS {i+1}")
         # ax_pip.legend(loc="upper right", fontsize=8, frameon=False, ncols=2)
         pip_legend_ax.legend(
             handles=pip_traces,
