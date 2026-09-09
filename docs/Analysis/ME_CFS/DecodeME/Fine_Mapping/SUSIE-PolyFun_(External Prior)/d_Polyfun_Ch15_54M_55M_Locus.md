@@ -22,7 +22,7 @@ The second UpSetPlot compares the minimal set of variants needed to achieve 50% 
 
 {{
 png_embed("docs/_figs/decode_me_polyfun_explainchr15_54500000_55500000_palindromes_keep_polyfun_upset_cs50_variants.png",
-alt="upset plot for chrom 15")
+alt="50 PIP upset plot for chrom 15")
 }}
 
 
@@ -39,7 +39,7 @@ The table below provides detailed information on $L=10$ SUSIE credible-set varia
 
 {{
 susie_polyfun_data_table(src="docs/_figs/decode_me_polyfun_explainchr15_54500000_55500000_palindromes_keep_l10_explain_detailed_table.parquet",
-id="chr1_polyfun_susie_table")
+id="chr15_polyfun_susie_table")
 }}
 
 

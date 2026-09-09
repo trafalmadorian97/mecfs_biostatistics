@@ -74,6 +74,12 @@ from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.fine_mapping.polyfun_explai
 from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.fine_mapping.polyfun_explainability.susie_explain_decode_me_37_chr15_54_925_638 import (
     POLYFUN_EXPLAIN_CHR15_54,
 )
+from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.fine_mapping.polyfun_explainability.susie_explain_decode_me_37_chr17_50_237_377 import (
+    POLYFUN_EXPLAIN_CHR17_50,
+)
+from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.fine_mapping.polyfun_explainability.susie_explain_decode_me_37_chr20_47_653_230 import (
+    POLYFUN_EXPLAIN_CHR20_47,
+)
 from mecfs_bio.assets.gwas.me_cfs.decode_me.analysis.fine_mapping.with_palindromes.susie_finemap_decode_me_37_chr1_174_128_548_locus_palindromes import (
     DECODE_ME_GWAS_37_CHR1_174_128_548_FINEMAP_PALINDROMES,
 )
@@ -260,6 +266,19 @@ ALL_FIGURE_TASKS: list[Task] = [
     POLYFUN_EXPLAIN_CHR15_54.groups_by_label["l10"].plot_svg,
     POLYFUN_EXPLAIN_CHR15_54.groups_by_label["l10"].detailed_table,
     POLYFUN_EXPLAIN_CHR15_54.groups_by_label["l10"].per_variant_annotation_table,
+    POLYFUN_EXPLAIN_CHR17_50.upset_all_polyfun,
+    POLYFUN_EXPLAIN_CHR17_50.upset_cs50_polyfun,
+    POLYFUN_EXPLAIN_CHR17_50.groups_by_label["l10"].plot_svg,
+    POLYFUN_EXPLAIN_CHR17_50.groups_by_label["l10"].detailed_table,
+    POLYFUN_EXPLAIN_CHR17_50.groups_by_label["l10"].per_variant_annotation_table,
+    POLYFUN_EXPLAIN_CHR20_47.upset_all_polyfun,
+    POLYFUN_EXPLAIN_CHR20_47.upset_cs50_polyfun,
+    POLYFUN_EXPLAIN_CHR20_47.groups_by_label["l10"].plot_svg,
+    POLYFUN_EXPLAIN_CHR20_47.groups_by_label["l10"].detailed_table,
+    POLYFUN_EXPLAIN_CHR20_47.groups_by_label["l10"].per_variant_annotation_table,
+    POLYFUN_EXPLAIN_CHR20_47.groups_by_label["l1"].plot_svg,
+    POLYFUN_EXPLAIN_CHR20_47.groups_by_label["l1"].detailed_table,
+    POLYFUN_EXPLAIN_CHR20_47.groups_by_label["l1"].per_variant_annotation_table,
     # H-magma
     DECODE_ME_H_MAGMA_ASSET_GENERATOR.labeled_by_annotation()[
         "adult_brain"
